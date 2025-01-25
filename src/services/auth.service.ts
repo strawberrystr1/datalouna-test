@@ -22,14 +22,14 @@ export const signUpUser = async (data: ISignUpPayload) => {
   const hashedPassword = bcrypt.hashSync(data.password, PASS_SALT_ROUNDS);
   const [userId] = await createUserMutation({
     ...data,
-    password: hashedPassword
+    password: hashedPassword,
+    balance: 40.00
   });
 
   const tokens = generateTokens(userId.id);
 
   updateUserMutation(userId.id, {
-    refresh_token: tokens.refreshToken,
-    balance: 40
+    refresh_token: tokens.refreshToken
   });
 
   return tokens;

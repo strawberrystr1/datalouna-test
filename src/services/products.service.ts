@@ -9,6 +9,7 @@ import { createPurchaseMutation } from "../sql/mutations/create-purchase";
 import { updateUserMutation } from "../sql/mutations/update-user.mutation";
 import { CACHE_TIME } from "../constants/base";
 import { mapAPIProducts } from "../utils/products";
+import { getInternalProductsQuery } from "../sql/queries/get-internal-products";
 
 export const getProducts = async (path: string) => {
   const query = new URLSearchParams({
@@ -52,6 +53,10 @@ export const buyProduct = async (userId: string, productId: string) => {
 
   return updatedUser.balance;
 };
+
+export const getInternalProducts = async () => {
+  return getInternalProductsQuery()
+}
 
 const getProduct = async (id: string) => {
   const [product] = await getProductQuery(id);

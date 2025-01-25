@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { handleAsyncError, returnResponse } from "../utils/response";
-import { buyProduct, getProducts } from "../services/products.service";
+import {
+  buyProduct,
+  getInternalProducts,
+  getProducts
+} from "../services/products.service";
 import { RequestWithUser } from "../types/auth";
 
 export const getProductsController = async (req: Request, res: Response) => {
@@ -19,6 +23,18 @@ export const purchaseProductContoller = async (
   try {
     const balance = await buyProduct(req.user!.id, req.params.id);
     returnResponse(res, true, { balance });
+  } catch (error) {
+    handleAsyncError(error, res);
+  }
+};
+
+export const getInternalProductsController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const data = await getInternalProducts();
+    returnResponse(res, true, { data });
   } catch (error) {
     handleAsyncError(error, res);
   }
