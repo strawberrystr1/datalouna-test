@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  app:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shop
+    ports:
+      - "3011:3011"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - /usr/src/app/node_modules
+    develop:
+      watch:
+        - action: rebuild
+          path: ./src/
+          target: /usr/src/app
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./src/sql/products-seed.sql:/docker-entrypoint-initdb.d/products-seed.sql
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
